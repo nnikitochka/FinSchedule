@@ -1,0 +1,36 @@
+[versions]
+sqlite = "3.41.2.2"
+hikaricp = "5.1.0"
+jdbi = "3.38.0"
+caffeine = "3.1.6"
+
+telegram = "9.2.0"
+gson = "2.11.0"
+jsoup = "1.20.1"
+guava = "33.3.1-jre"
+snakeyaml = "2.5"
+slf4j = "2.0.17"
+
+[libraries]
+# --- БД ---
+sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite" }
+hikaricp = { module = "com.zaxxer:HikariCP", version.ref = "hikaricp" }
+jdbi-core = { module = "org.jdbi:jdbi3-core", version.ref = "jdbi" }
+jdbi-sqlobject = { module = "org.jdbi:jdbi3-sqlobject", version.ref = "jdbi" }
+jdbi-caffeine = { module = "org.jdbi:jdbi3-caffeine-cache", version.ref = "jdbi" }
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+
+# --- Telegram Bots ---
+telegram-longpolling = { module = "org.telegram:telegrambots-longpolling", version.ref = "telegram" }
+telegram-client = { module = "org.telegram:telegrambots-client", version.ref = "telegram" }
+
+# --- Утилки ---
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+
+# --- Конфиги ---
+guava = { module = "com.google.guava:guava", version.ref = "guava" }
+snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
+
+# --- Логирование ---
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }

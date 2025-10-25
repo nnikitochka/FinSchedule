@@ -1,0 +1,5 @@
+package ru.nnedition.finschedule;
+
+public class ProjectInfo {
+    public static final String VERSION = "{{ version }}";
+}
