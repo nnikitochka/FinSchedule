@@ -49,8 +49,8 @@ public class LessonsData implements DataHandler {
             final var document = getDocument(startDate, endDate, null);
             handleDocument(document);
             return;
-        } catch (Exception _) {
-            logger.error("Ошибка получения полного расписания за один раз. Приступаю к частичной обработке данных...");
+        } catch (Exception e) {
+            logger.error("Ошибка получения полного расписания за один раз: "+e.getMessage()+". Приступаю к частичной обработке данных...");
         }
 
         //@TODO добавить автоматический баг репорт если дошло до этого момента
