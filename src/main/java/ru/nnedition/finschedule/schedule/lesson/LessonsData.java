@@ -93,7 +93,6 @@ public class LessonsData implements DataHandler {
             final var groups = cells.get(2).text().trim().split(", ");
             final var groupRaw = groups[0];
 
-            final var group = FinSchedule.getSchedule().getGroupOrCreate(groupRaw);
             final var schedule = FinSchedule.getSchedule();
             final Group group = schedule.getGroupOrCreate(groupRaw);
 
