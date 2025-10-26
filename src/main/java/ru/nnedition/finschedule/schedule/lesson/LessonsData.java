@@ -78,7 +78,7 @@ public class LessonsData implements DataHandler {
         final var table = document.select(".tbl-lessons").get(1);
         if (table == null) return;
 
-        var rows = table.select("tr").stream().skip(1).toList();
+        final var rows = table.select("tr").stream().skip(1).toList();
         if (rows.isEmpty()) return;
 
         for (final Element row : rows) {
@@ -94,8 +94,10 @@ public class LessonsData implements DataHandler {
             final var groupRaw = groups[0];
 
             final var group = FinSchedule.getSchedule().getGroupOrCreate(groupRaw);
+            final var schedule = FinSchedule.getSchedule();
+            final Group group = schedule.getGroupOrCreate(groupRaw);
 
-            final var combined = Arrays.stream(groups).skip(0).map(FinSchedule.getSchedule()::getGroupOrCreate).toList();
+            final var combined = Arrays.stream(groups).skip(0).map(schedule::getGroupOrCreate).toList();
 
             final var times = cells.get(3).text().trim().split(" - ");
             final var start = times[0];
