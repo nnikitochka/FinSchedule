@@ -111,7 +111,7 @@ public class LessonsData implements DataHandler {
             final var type = cells.get(5).text().trim();
             final var audience = cells.get(6).text().trim();
             final var buildingShort = cells.get(7).text().trim();
-            final var building = FinSchedule.getSchedule().getBuilding(buildingShort);
+            final var building = schedule.getBuilding(buildingShort);
             final var teacher = cells.get(8).text().trim();
 
             final var lesson = new Lesson(
