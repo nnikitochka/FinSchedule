@@ -146,9 +146,8 @@ public class LessonsData implements DataHandler {
         var formBodyBuilder = new FormBody.Builder()
                 .add("Submit", "Просмотреть")
                 .add("bdate", startDate)
-                .add("edate", endDate);
-
-        formBodyBuilder.add("groupname", group == null ? "?" : group);
+                .add("edate", endDate)
+                .add("groupname", group == null ? "?" : group);
 
         var request = new Request.Builder()
                 .url(SCHEDULE_SITE)
