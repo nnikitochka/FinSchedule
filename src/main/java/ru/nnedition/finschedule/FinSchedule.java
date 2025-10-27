@@ -58,11 +58,6 @@ public final class FinSchedule {
             logger.error("Ошибка при регистрации бота: " + t.getLocalizedMessage(), t);
             return;
         }
-
-        System.out.println(schedule);
-        System.out.println(schedule.getBuildings());
-        schedule.updateBuildingsData();
-        System.out.println(schedule.getBuildings());
     }
 
     public static void stop() {
