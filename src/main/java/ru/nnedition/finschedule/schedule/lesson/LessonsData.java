@@ -17,9 +17,7 @@ import ru.nnedition.finschedule.utils.DateUtils;
 import ru.nnedition.logger.Logger;
 
 import java.net.SocketException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -55,8 +53,10 @@ public class LessonsData implements DataHandler {
 
         //@TODO добавить автоматический баг репорт если дошло до этого момента
 
+        final List<CompletableFuture<Void>> futures = new ArrayList<>();
+
         for (final Group group : FinSchedule.getSchedule().getGroups()) {
-            CompletableFuture.runAsync(() -> {
+            final var future = CompletableFuture.runAsync(() -> {
                 try {
                     final var document = getDocument(startDate, endDate, group.name());
                     handleDocument(document);
@@ -65,7 +65,12 @@ public class LessonsData implements DataHandler {
                     logger.error("Ошибка при обработке группы "+group.name()+": " + e.getMessage());
                 }
             });
+
+            futures.add(future);
         }
+
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenRun(() -> logger.info("Обработка групп окончена. Всего было обработано "+futures.size()+"."));
     }
 
     private void handleDocuments(Document... documents) {
