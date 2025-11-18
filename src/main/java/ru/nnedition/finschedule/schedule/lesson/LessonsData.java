@@ -12,7 +12,6 @@ import org.jsoup.nodes.Element;
 import ru.nnedition.finschedule.FinSchedule;
 import ru.nnedition.finschedule.schedule.DataHandler;
 import ru.nnedition.finschedule.schedule.groups.Group;
-import ru.nnedition.finschedule.schedule.groups.GroupsData;
 import ru.nnedition.finschedule.utils.DateUtils;
 import ru.nnedition.logger.Logger;
 
@@ -24,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class LessonsData implements DataHandler {
-    private static final Logger logger = Logger.getLogger(GroupsData.class);
+    private static final Logger logger = Logger.getLogger(LessonsData.class);
 
     private final Map<String, Day> lessons = new ConcurrentHashMap<>();
     @NotNull

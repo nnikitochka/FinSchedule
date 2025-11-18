@@ -11,17 +11,28 @@ public final class FinSchedule {
     public static final Logger logger = Logger.getLogger(FinSchedule.class);
 
     private static final long START_TIME = System.currentTimeMillis();
-    public static long getUpTime() { return System.currentTimeMillis() - START_TIME; }
+    public static long getUpTime() {
+        return System.currentTimeMillis() - START_TIME;
+    }
 
     private static final SecretConfig secretConfig = new SecretConfig();
     private static final GeneralConfig generalConfig = new GeneralConfig();
-    public static @NotNull GeneralConfig getConfig() { return generalConfig; }
+    @NotNull
+    public static GeneralConfig getConfig() {
+        return generalConfig;
+    }
 
     private static final Schedule schedule = new Schedule();
-    public static @NotNull Schedule getSchedule() { return schedule; }
+    @NotNull
+    public static Schedule getSchedule() {
+        return schedule;
+    }
 
     private static FinBotTG bot;
-    public static @NotNull FinBotTG getBot() { return bot; }
+    @NotNull
+    public static FinBotTG getBot() {
+        return bot;
+    }
 
     static void main() {
         logger.info("Загрузка данных...");
@@ -46,11 +57,19 @@ public final class FinSchedule {
 
         try {
             bot.getCallbackHandlerRegistry().registerDefaults();
+            final var registeredHandlersFormated = new Plural("обработчик", "обработчика", "обработчиков", "")
+                    .format(bot.getCallbackHandlerRegistry().getHandlers().size());
+            logger.info("Зарегистрировано "+registeredHandlersFormated+" коллбеков.");
+
             bot.getMenuRegistry().registerDefaults();
+            final var registeredMenusFormated = new Plural("меню", "меню", "меню", "")
+                    .format(bot.getMenuRegistry().getMenus().size());
+            logger.info("Зарегистрировано "+registeredMenusFormated+".");
+
             bot.getCommandRegistry().registerDefaults();
-            final var registeredFormated = new Plural("команда", "команды", "команд", "")
+            final var registeredCommandsFormated = new Plural("команда", "команды", "команд", "")
                     .format(bot.getCommandRegistry().getCommands().size());
-            FinSchedule.logger.info("Зарегистрировано "+registeredFormated+" бота.");
+            logger.info("Зарегистрировано "+registeredCommandsFormated+".");
 
             bot.register();
             logger.success("Бот был успешно зарегистрирован.");

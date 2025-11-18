@@ -72,7 +72,7 @@ public final class DateUtils {
             var dayFormat = new SimpleDateFormat("EEEE", Locale.of("ru"));
             dayFormat.setTimeZone(TIME_ZONE);
 
-            String dayOfWeek = dayFormat.format(parsedDate);
+            final String dayOfWeek = dayFormat.format(parsedDate);
 
             return dayOfWeek.toUpperCase();
         } catch (ParseException e) {
