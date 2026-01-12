@@ -7,7 +7,7 @@ import ru.nnedition.finschedule.bot.menu.context.EditMenuContext;
 import ru.nnedition.finschedule.bot.menu.context.MenuContext;
 
 public class Menu {
-    protected String id = this.getClass().getSimpleName();
+    private final String id = this.getClass().getSimpleName();
     @NotNull
     public final String getId() {
         return this.id;

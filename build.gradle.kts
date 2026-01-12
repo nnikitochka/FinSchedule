@@ -49,7 +49,7 @@ sourceSets {
 tasks {
     jar {
         manifest {
-            attributes["Main-Class"] = "$group.FinSchedule"
+            attributes["Main-Class"] = "ru.nnedition.finschedule.FinSchedule"
         }
     }
 

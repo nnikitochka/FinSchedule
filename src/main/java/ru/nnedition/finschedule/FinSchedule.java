@@ -57,22 +57,24 @@ public final class FinSchedule {
 
         try {
             bot.getCallbackHandlerRegistry().registerDefaults();
+            bot.getMenuRegistry().registerDefaults();
+            bot.getCommandRegistry().registerDefaults();
+
+            bot.register();
+            logger.success("Бот был успешно зарегистрирован.");
+
             final var registeredHandlersFormated = new Plural("обработчик", "обработчика", "обработчиков", "")
                     .format(bot.getCallbackHandlerRegistry().getHandlers().size());
             logger.info("Зарегистрировано "+registeredHandlersFormated+" коллбеков.");
 
-            bot.getMenuRegistry().registerDefaults();
             final var registeredMenusFormated = new Plural("меню", "меню", "меню", "")
                     .format(bot.getMenuRegistry().getMenus().size());
             logger.info("Зарегистрировано "+registeredMenusFormated+".");
 
-            bot.getCommandRegistry().registerDefaults();
             final var registeredCommandsFormated = new Plural("команда", "команды", "команд", "")
                     .format(bot.getCommandRegistry().getCommands().size());
             logger.info("Зарегистрировано "+registeredCommandsFormated+".");
 
-            bot.register();
-            logger.success("Бот был успешно зарегистрирован.");
         } catch (Throwable t) {
             logger.error("Ошибка при регистрации бота: " + t.getLocalizedMessage(), t);
             return;

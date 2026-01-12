@@ -23,7 +23,7 @@ public final class FinBotTG extends TelegramBot {
     private final AdminList adminListConfig = new AdminList();
     @NotNull
     public List<String> getAdmins() {
-        return adminListConfig.adminIds;
+        return this.adminListConfig.adminIds;
     }
 
     public FinBotTG(String token) {
@@ -32,7 +32,7 @@ public final class FinBotTG extends TelegramBot {
     }
 
     public boolean isAdmin(User user) {
-        return getAdmins().contains(user.getId().toString());
+        return this.getAdmins().contains(user.getId().toString());
     }
 
     @Override
@@ -60,7 +60,7 @@ public final class FinBotTG extends TelegramBot {
 
     @Override
     public void onMessageReceived(@NotNull final MessageReceiveEvent event) {
-        var message = SendMessage.builder()
+        final var message = SendMessage.builder()
                 .text(event.getText())
                 .chatId(event.getChat().getId())
                 .build();
