@@ -1,4 +1,4 @@
-package ru.nnedition.finschedule.bot.menu.admin;
+package ru.nnedition.finschedule.bot.menu.impl.admin;
 
 import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;

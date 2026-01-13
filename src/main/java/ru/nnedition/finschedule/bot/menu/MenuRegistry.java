@@ -2,7 +2,7 @@ package ru.nnedition.finschedule.bot.menu;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import ru.nnedition.finschedule.bot.menu.admin.AdminMenu;
+import ru.nnedition.finschedule.bot.menu.impl.admin.AdminMenu;
 import ru.nnedition.logger.Logger;
 
 import java.util.Collection;
@@ -43,7 +43,8 @@ public class MenuRegistry {
 
     public void registerDefaults() {
         this.register(
-                new AdminMenu()
+                new AdminMenu(),
+                new SelectGroupMenu()
         );
     }
 }

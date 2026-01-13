@@ -7,7 +7,7 @@ import ru.nnedition.finschedule.FinSchedule;
 import ru.nnedition.finschedule.bot.command.Command;
 import ru.nnedition.finschedule.bot.command.CommandScope;
 import ru.nnedition.finschedule.bot.menu.context.MenuContext;
-import ru.nnedition.finschedule.bot.menu.admin.AdminMenu;
+import ru.nnedition.finschedule.bot.menu.impl.admin.AdminMenu;
 
 public class AdminCommand extends Command {
     public AdminCommand() {
