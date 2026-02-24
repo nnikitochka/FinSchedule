@@ -2,6 +2,7 @@ package ru.nnedition.finschedule.bot.menu;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.nnedition.finschedule.bot.menu.impl.SelectGroupMenu;
 import ru.nnedition.finschedule.bot.menu.impl.admin.AdminMenu;
 import ru.nnedition.logger.Logger;
 
