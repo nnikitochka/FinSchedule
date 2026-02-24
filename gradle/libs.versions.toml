@@ -4,7 +4,7 @@ hikaricp = "5.1.0"
 jdbi = "3.38.0"
 caffeine = "3.1.6"
 
-telegram = "9.2.0"
+telegram = "9.4.0"
 gson = "2.11.0"
 jsoup = "1.20.1"
 guava = "33.3.1-jre"
