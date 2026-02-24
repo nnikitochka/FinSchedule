@@ -11,6 +11,7 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 import ru.nnedition.finschedule.FinSchedule;
 import ru.nnedition.finschedule.bot.callback.CallbackData;
 import ru.nnedition.finschedule.bot.callback.CallbackHandler;
+import ru.nnedition.finschedule.bot.callback.impl.MenuUpdateCallbackData;
 import ru.nnedition.finschedule.bot.menu.Menu;
 import ru.nnedition.finschedule.bot.menu.context.EditMenuContext;
 import ru.nnedition.finschedule.bot.menu.context.MenuContext;
@@ -25,7 +26,7 @@ public final class AdminMenu extends Menu {
         SendMessage message = SendMessage.builder()
                 .chatId(context.getChat().getId())
                 .text(ResourceMonitor.getText())
-                .replyMarkup(this.getKeyboard())
+                .replyMarkup(this.keyboard)
                 .build();
 
         var msg = SendingUtils.tryExecute(message);
@@ -50,7 +51,7 @@ public final class AdminMenu extends Menu {
     private InlineKeyboardMarkup getKeyboard() {
         var updateButton = InlineKeyboardButton.builder()
                 .text(FinSchedule.getConfig().refreshButton)
-                .callbackData(new CallbackData("menuUpdate", Map.of("menuId", this.getId())).serialize())
+                .callbackData(new MenuUpdateCallbackData(this).serialize())
                 .build();
 
         return InlineKeyboardMarkup.builder()

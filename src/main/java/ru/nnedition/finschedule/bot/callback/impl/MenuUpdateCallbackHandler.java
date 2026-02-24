@@ -17,12 +17,11 @@ public class MenuUpdateCallbackHandler extends CallbackHandler {
 
     @Override
     public void handle(CallbackData data, String callbackId, User from, Message message) {
-        final var menuId = data.get("menuId");
-        if (menuId == null) return;
-        final var menu = FinSchedule.getBot().getMenuRegistry().getMenu(menuId);
+        final var menu = MenuUpdateCallbackData.getMenu(data);
         if (menu == null) return;
 
-        final var isSuccess = menu.update(new EditMenuContext(message.getChat(), from, message.getMessageId()));
+        final var context = new EditMenuContext(message.getChat(), from, message.getMessageId());
+        final var isSuccess = menu.update(context);
 
         if (isSuccess) return;
 
