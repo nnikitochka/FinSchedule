@@ -14,9 +14,11 @@ public record Level(
     private static final String CYAN_COLOR = "\u001B[36m";
 
     public static final Level ERROR = new Level("ERROR", 1, RED_COLOR);
+    public static final Level STD_ERR = new Level("STDERR", 1, RED_COLOR);
     public static final Level WARN = new Level("WARN", 2, YELLOW_COLOR);
     public static final Level INFO = new Level("INFO", 3, RESET_COLOR);
     public static final Level SUCCESS = new Level("SUCCESS", 3, GREEN_COLOR);
-    public static final Level DEBUG = new Level("DEBUG", 4, RESET_COLOR);
-    public static final Level TRACE = new Level("TRACE", 5, RESET_COLOR);
+    public static final Level STD_OUT = new Level("STDOUT", 4, RESET_COLOR);
+    public static final Level DEBUG = new Level("DEBUG", 5, RESET_COLOR);
+    public static final Level TRACE = new Level("TRACE", 6, RESET_COLOR);
 }
