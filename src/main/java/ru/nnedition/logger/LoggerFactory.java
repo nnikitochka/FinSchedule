@@ -20,4 +20,10 @@ public final class LoggerFactory {
 
     public static PrintStream originalOut = System.out;
     public static PrintStream originalErr = System.err;
+
+
+    static {
+        System.setOut(new LoggerPrintStream(originalOut, Level.STD_OUT));
+        System.setErr(new LoggerPrintStream(originalErr, Level.STD_ERR));
+    }
 }

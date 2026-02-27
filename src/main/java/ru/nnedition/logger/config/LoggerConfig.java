@@ -11,32 +11,40 @@ public class LoggerConfig {
     @NotNull
     protected String dataFormat = DEFAULT_DATA_FORMAT;
     @NotNull
-    public String getDataFormat() {
+    public final String getDataFormat() {
         return dataFormat;
     }
-    public void setDataFormat(String dataFormat) {
+    public final void setDataFormat(String dataFormat) {
         this.dataFormat = dataFormat;
         this.dateFormatter = DateTimeFormatter.ofPattern(dataFormat);
     }
+    @NotNull
     protected DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern(this.dataFormat);
-    public DateTimeFormatter getDateFormatter() {return dateFormatter;}
+    @NotNull
+    public final DateTimeFormatter getDateFormatter() {
+        return dateFormatter;
+    }
 
 
     public static String DEFAULT_TIME_FORMAT = "HH:mm:ss";
     protected String timeFormat = DEFAULT_TIME_FORMAT;
-    public String getTimeFormat() {return timeFormat;}
-    public void setTimeFormat(String timeFormat) {
+    public final String getTimeFormat() {
+        return this.timeFormat;
+    }
+    public final void setTimeFormat(String timeFormat) {
         this.timeFormat = timeFormat;
         this.timeFormatter = DateTimeFormatter.ofPattern(timeFormat);
     }
 
     protected DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(this.timeFormat);
-    public DateTimeFormatter getTimeFormatter() {return timeFormatter;}
+    public final DateTimeFormatter getTimeFormatter() {
+        return timeFormatter;
+    }
 
     /**
      * Минимальный уровень логирования
      */
-    public static Level DEFAULT_LEVEL = Level.INFO;
+    public static Level DEFAULT_LEVEL = Level.STD_OUT;
     public Level level = DEFAULT_LEVEL;
 
     /**
@@ -50,6 +58,6 @@ public class LoggerConfig {
      * {thread} - имя потока из которого был вызван логгер
      * {message} - сообщение лога
      */
-    public static String DEFAULT_FORMAT = "[{date} {time} {level}] ({thread} - {trace}): {message}";
+    public static String DEFAULT_FORMAT = "[{date} {time} {level}] ({thread}): {message}";
     public String format = DEFAULT_FORMAT;
 }
