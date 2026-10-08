@@ -2,8 +2,10 @@ package ru.nnedition.finschedule.placeholders
 
 import ru.nnedition.finschedule.placeholders.impl.AppVersionPlaceholder
 import ru.nnedition.finschedule.placeholders.impl.BotInfoPlaceholder
+import ru.nnedition.finschedule.placeholders.impl.BotUsersCountPlaceholder
 import ru.nnedition.finschedule.placeholders.impl.BuildingsPlaceholder
 import ru.nnedition.finschedule.placeholders.impl.CommandsPlaceholder
+import ru.nnedition.finschedule.placeholders.impl.ScheduleUpdateDelayPlaceholder
 import ru.nnedition.logger.Logger
 
 class PlaceholderRegistry {
@@ -37,7 +39,8 @@ class PlaceholderRegistry {
             BotInfoPlaceholder(),
             BotUsersCountPlaceholder(),
             BuildingsPlaceholder(),
-            CommandsPlaceholder()
+            CommandsPlaceholder(),
+            ScheduleUpdateDelayPlaceholder()
         )
     }
 

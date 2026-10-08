@@ -13,6 +13,9 @@ public final class GeneralConfig extends YamlConfig {
     @ConfigField(section = "update_lessons_days_count")
     public int updateLessonsDaysCount = 30;
 
+    @ConfigField(section = "schedule_update_delay")
+    public long scheduleUpdateDelaySec = 60;
+
 
     @ConfigField(section = "buttons.refresh")
     public String refreshButton = "🔄 Обновить";
