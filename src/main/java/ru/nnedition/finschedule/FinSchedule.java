@@ -25,6 +25,11 @@ public final class FinSchedule {
         return generalConfig;
     }
 
+    @NotNull
+    public static SecretConfig getSecretConfig() {
+        return secretConfig;
+    }
+
     private static final Schedule schedule = new Schedule();
     @NotNull
     public static Schedule getSchedule() {

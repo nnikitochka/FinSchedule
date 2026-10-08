@@ -1,5 +1,6 @@
 package ru.nnedition.finschedule.bot;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
@@ -24,9 +25,10 @@ public abstract class TelegramBot extends TelegramBotsLongPollingApplication {
 
     private final String token;
     public final OkHttpTelegramClient httpClient;
-    public TelegramBot(@NotNull final String token) {
+    public TelegramBot(@NotNull final OkHttpClient httpClient, @NotNull final String token) {
+        super(ObjectMapper::new, () -> httpClient);
         this.token = token;
-        this.httpClient = new OkHttpTelegramClient(new OkHttpClient(), this.token);
+        this.httpClient = new OkHttpTelegramClient(httpClient, this.token);
     }
 
     private final UpdateConsumer updateConsumer = new UpdateConsumer(this);

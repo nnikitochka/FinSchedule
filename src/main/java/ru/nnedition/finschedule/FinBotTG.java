@@ -1,10 +1,14 @@
 package ru.nnedition.finschedule;
 
+import okhttp3.Authenticator;
+import okhttp3.Credentials;
+import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
+import org.telegram.telegrambots.longpolling.util.TelegramOkHttpClientFactory;
 import ru.nnedition.finschedule.bot.TelegramBot;
 import ru.nnedition.finschedule.bot.chat.ChatUtils;
 import ru.nnedition.finschedule.bot.user.UserRepository;
@@ -17,6 +21,8 @@ import ru.nnedition.finschedule.config.AdminList;
 import ru.nnedition.finschedule.utils.SendingUtils;
 import ru.nnedition.logger.Logger;
 
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.util.List;
 
 public final class FinBotTG extends TelegramBot {
@@ -29,8 +35,76 @@ public final class FinBotTG extends TelegramBot {
     }
 
     public FinBotTG(String token) {
-        super(token);
+        super(createHttpClient(), token);
         this.adminListConfig.load();
+    }
+
+    /**
+     * Создаёт HTTP-клиент для общения с Telegram API.
+     * Если в secret.yml включён прокси, он используется и для отправки запросов,
+     * и для long-polling (getUpdates).
+     */
+    private static OkHttpClient createHttpClient() {
+        final var secret = FinSchedule.getSecretConfig();
+
+        final var defaultCreator = new TelegramOkHttpClientFactory.DefaultOkHttpClientCreator();
+        if (!secret.proxyEnabled) {
+            return defaultCreator.get();
+        }
+        if (!secret.isProxyConfigured()) {
+            logger.warn("Прокси включён в secret.yml, но не заданы host или port. Бот запущен без прокси.");
+            return defaultCreator.get();
+        }
+
+        final boolean socks = "socks".equalsIgnoreCase(secret.proxyType)
+                || "socks5".equalsIgnoreCase(secret.proxyType);
+        final var proxy = new Proxy(
+                socks ? Proxy.Type.SOCKS : Proxy.Type.HTTP,
+                new InetSocketAddress(secret.proxyHost, secret.proxyPort)
+        );
+
+        final boolean auth = secret.proxyUsername != null && !secret.proxyUsername.isEmpty();
+
+        if (socks) {
+            logger.info("Подключение к Telegram через SOCKS5-прокси " + secret.proxyHost + ":" + secret.proxyPort
+                    + (auth ? " с авторизацией" : ""));
+
+            if (auth) {
+                // Для SOCKS учётные данные подставляет сам JVM через java.net.Authenticator
+                // (OkHttp-ный proxyAuthenticator работает только для HTTP-прокси, код 407).
+                // JDK при этом передаёт RequestorType.SERVER, поэтому фильтруем по порту прокси.
+                final int proxyPort = secret.proxyPort;
+                final String username = secret.proxyUsername;
+                final String password = secret.proxyPassword == null ? "" : secret.proxyPassword;
+                java.net.Authenticator.setDefault(new java.net.Authenticator() {
+                    @Override
+                    protected java.net.PasswordAuthentication getPasswordAuthentication() {
+                        if (getRequestingPort() != proxyPort) return null;
+                        return new java.net.PasswordAuthentication(username, password.toCharArray());
+                    }
+                });
+            }
+
+            return new TelegramOkHttpClientFactory.SocksProxyOkHttpClientCreator(() -> proxy).get();
+        }
+
+        logger.info("Подключение к Telegram через HTTP-прокси " + secret.proxyHost + ":" + secret.proxyPort
+                + (auth ? " с авторизацией" : ""));
+
+        final Authenticator proxyAuthenticator = (route, response) -> {
+            final String credential = Credentials.basic(
+                    secret.proxyUsername,
+                    secret.proxyPassword == null ? "" : secret.proxyPassword
+            );
+            return response.request().newBuilder()
+                    .header("Proxy-Authorization", credential)
+                    .build();
+        };
+
+        return new TelegramOkHttpClientFactory.HttpProxyOkHttpClientCreator(
+                () -> proxy,
+                () -> auth ? proxyAuthenticator : null
+        ).get();
     }
 
     private final UserRepository usersManager = new UserRepository();
