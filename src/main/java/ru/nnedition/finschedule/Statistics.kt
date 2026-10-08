@@ -1,6 +1,6 @@
 package ru.nnedition.finschedule
 
-class Statistic {
+class Statistics {
     //@TODO заменить затычку реальной метрикой
     var users: Int = 1
 

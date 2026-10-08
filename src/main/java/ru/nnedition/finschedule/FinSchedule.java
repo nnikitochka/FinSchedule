@@ -11,7 +11,7 @@ import ru.nnedition.logger.Logger;
 import java.io.IOException;
 
 public final class FinSchedule {
-    public static final Statistic statistics = new Statistic();
+    public static final Statistics statistics = new Statistics();
 
     public static final Logger logger = Logger.getLogger(FinSchedule.class);
 
