@@ -3,17 +3,20 @@ package ru.nnedition.finschedule;
 import org.jetbrains.annotations.NotNull;
 import ru.nnedition.finschedule.config.GeneralConfig;
 import ru.nnedition.finschedule.config.SecretConfig;
+import ru.nnedition.finschedule.data.DBManager;
 import ru.nnedition.finschedule.schedule.Schedule;
 import ru.nnedition.format.Plural;
 import ru.nnedition.logger.Logger;
 
-public final class FinSchedule {
-    public static final Logger logger = Logger.getLogger(FinSchedule.class);
+import java.io.IOException;
 
+public final class FinSchedule {
     private static final long START_TIME = System.currentTimeMillis();
     public static long getUpTime() {
         return System.currentTimeMillis() - START_TIME;
     }
+
+    public static final Logger logger = Logger.getLogger(FinSchedule.class);
 
     private static final SecretConfig secretConfig = new SecretConfig();
     private static final GeneralConfig generalConfig = new GeneralConfig();
@@ -38,11 +41,7 @@ public final class FinSchedule {
         logger.info("Загрузка данных...");
 
         secretConfig.load();
-        generalConfig.load();
-
-        schedule.loadData();
-
-        var token = secretConfig.botToken;
+        final var token = secretConfig.botToken;
         if (token == null || token.isEmpty()) {
             System.out.println(
                     "Похоже, программа запускается впервые.\n"+
@@ -51,6 +50,18 @@ public final class FinSchedule {
             return;
         }
 
+        generalConfig.load();
+
+        try {
+            DBManager.initSQLite();
+        } catch (IOException e) {
+            logger.error("Ошибка загрузки базы данных: " + e.getLocalizedMessage(), e);
+            logger.error("Остановка...");
+            return;
+        }
+
+        schedule.loadData();
+
         logger.info("Запуск бота...");
 
         bot = new FinBotTG(token);
@@ -58,7 +69,7 @@ public final class FinSchedule {
         try {
             bot.getCallbackHandlerRegistry().registerDefaults();
             bot.getMenuRegistry().registerDefaults();
-            bot.getCommandRegistry().registerDefaults();
+            bot.getCommandRegistry().registerDefaults(bot);
 
             bot.register();
             logger.success("Бот был успешно зарегистрирован.");

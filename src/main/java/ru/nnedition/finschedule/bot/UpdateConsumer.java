@@ -27,6 +27,7 @@ public class UpdateConsumer implements LongPollingUpdateConsumer {
                     break;
                 }
 
+                System.out.println(update);
                 if (update.hasMessage() && update.getMessage().hasText()) {
                     var message = update.getMessage();
 

@@ -1,13 +1,15 @@
 package ru.nnedition.finschedule.schedule;
 
+import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.nnedition.finschedule.schedule.buildings.Building;
 import ru.nnedition.finschedule.schedule.buildings.BuildingsData;
+import ru.nnedition.finschedule.schedule.dataminer.DataMinerManager;
+import ru.nnedition.finschedule.schedule.dataminer.impl.BuildingsDataMiner;
 import ru.nnedition.finschedule.schedule.groups.Group;
 import ru.nnedition.finschedule.schedule.groups.GroupsData;
 import ru.nnedition.finschedule.schedule.lesson.Day;
-import ru.nnedition.finschedule.schedule.lesson.Lesson;
 import ru.nnedition.finschedule.schedule.lesson.LessonsData;
 
 import java.util.Collection;
@@ -16,11 +18,12 @@ import java.util.Map;
 
 public final class Schedule {
     public void loadData() {
-        this.updateBuildingsData();
+//        this.updateBuildingsData();
         this.updateGroupsData();
         this.updateLessonsData();
     }
 
+    private DataMinerManager manager = new DataMinerManager();
 
     private final BuildingsData buildingsData = new BuildingsData();
     @NotNull
@@ -50,7 +53,7 @@ public final class Schedule {
         return this.groupsData.getOrCreate(name);
     }
     public void updateGroupsData() {
-        this.groupsData.updateData();
+//        this.groupsData.updateData();
     }
 
 

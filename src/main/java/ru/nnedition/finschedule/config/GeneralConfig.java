@@ -11,14 +11,23 @@ public final class GeneralConfig extends YamlConfig {
     }
 
     @ConfigField(section = "update_lessons_days_count")
-    public int updateLessonsDaysCount = 14;
+    public int updateLessonsDaysCount = 30;
 
 
     @ConfigField(section = "buttons.refresh")
     public String refreshButton = "🔄 Обновить";
 
+    @ConfigField(section = "buttons.previous")
+    public String prevButton = "⏪ Назад";
+
+    @ConfigField(section = "buttons.next")
+    public String nextButton = "⏩ Вперёд";
+
     @ConfigField(section = "buttons.close")
     public String closeButton = "🧨 Закрыть";
+
+    @ConfigField(section = "buttons.back")
+    public String backButton = "🚪 Обратно";
 
 
     @ConfigField(section = "format.building")
@@ -66,4 +75,7 @@ public final class GeneralConfig extends YamlConfig {
             "",
             "%bot_info%"
     ));
+
+    @ConfigField(section = "messages.select_group")
+    public String selectGroup = "🧲 Выберите нужную группу.";
 }

@@ -6,6 +6,8 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.nnedition.finschedule.bot.TelegramBot;
+import ru.nnedition.finschedule.bot.chat.ChatUtils;
+import ru.nnedition.finschedule.bot.user.UserRepository;
 import ru.nnedition.finschedule.bot.callback.CallbackData;
 import ru.nnedition.finschedule.bot.command.CommandScope;
 import ru.nnedition.finschedule.bot.event.CallbackQueryEvent;
@@ -31,6 +33,12 @@ public final class FinBotTG extends TelegramBot {
         this.adminListConfig.load();
     }
 
+    private final UserRepository usersManager = new UserRepository();
+    @NotNull
+    public UserRepository getUsersManager() {
+        return this.usersManager;
+    }
+
     public boolean isAdmin(User user) {
         return this.getAdmins().contains(user.getId().toString());
     }
@@ -43,23 +51,44 @@ public final class FinBotTG extends TelegramBot {
 
     @Override
     public void onCommandReceived(@NotNull final CommandReceiveEvent event) {
+        this.usersManager.getOrLoad(event.getSender());
+
         final var label = event.getCommandLabel();
-        var command = this.getCommandRegistry().getCommand(label);
+        final var command = this.getCommandRegistry().getCommand(label);
         if (command == null) return;
 
-        System.out.println(event.getCommandLabel()+": "+String.join(", ", event.getArgs()));
+        final var chat = event.getChat();
+        final var sender = event.getSender();
+
+        {
+            final Object senderIdentify = sender.getUserName() == null ? sender.getId() : sender.getUserName();
+            final var chatType = ChatUtils.getChatType(chat);
+            final var chatTypeTranslate = chatType == null ? "N/A" : chatType.translate.brief();
+
+            @SuppressWarnings("StringBufferReplaceableByString")
+            final var outputFormat = new StringBuilder()
+                    .append(senderIdentify)
+                    .append(" выполнил команду в ")
+                    .append(chatTypeTranslate)
+                    .append(": ")
+                    .append(event.getText());
+
+            System.out.println(outputFormat);
+        }
 
         if (!event.getChat().isUserChat()) return;
 
-        if (command.getScope() == CommandScope.ALL_ADMIN_PRIVATE_CHATS) {
+        if (command.scope == CommandScope.ALL_ADMIN_PRIVATE_CHATS) {
             if (!FinSchedule.getBot().isAdmin(event.getSender())) return;
         }
 
-        command.execute(event.getArgs(), event.getSender(), event.getChat(), event.getMessageId());
+        command.execute(event.getArgs(), sender, chat, event.getMessageId());
     }
 
     @Override
     public void onMessageReceived(@NotNull final MessageReceiveEvent event) {
+        this.usersManager.getOrLoad(event.getSender());
+
         final var message = SendMessage.builder()
                 .text(event.getText())
                 .chatId(event.getChat().getId())
@@ -71,12 +100,14 @@ public final class FinBotTG extends TelegramBot {
     @Override
     public void onCallbackQuery(@NotNull final CallbackQueryEvent event) {
         final var callback = event.getCallback();
+        this.usersManager.getOrLoad(callback.getFrom());
+
         final var rawData = callback.getData();
         final var data = CallbackData.parse(rawData);
 
-        final var handler = this.getCallbackHandlerRegistry().getHandler(data.getKey());
+        final var handler = this.getCallbackHandlerRegistry().getHandler(data.key);
         if (handler == null) {
-            logger.warn("Получен неизвестный коллбек: "+event.getCallback());
+            logger.warn("Получен неизвестный коллбек ("+data.key+"): "+event.getCallback());
             return;
         }
 

@@ -1,5 +1,6 @@
 package ru.nnedition.finschedule.bot;
 
+import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.telegram.telegrambots.client.okhttp.OkHttpTelegramClient;
 import org.telegram.telegrambots.longpolling.TelegramBotsLongPollingApplication;
@@ -25,7 +26,7 @@ public abstract class TelegramBot extends TelegramBotsLongPollingApplication {
     public final OkHttpTelegramClient httpClient;
     public TelegramBot(@NotNull final String token) {
         this.token = token;
-        this.httpClient = new OkHttpTelegramClient(this.token);
+        this.httpClient = new OkHttpTelegramClient(new OkHttpClient(), this.token);
     }
 
     private final UpdateConsumer updateConsumer = new UpdateConsumer(this);
@@ -49,9 +50,9 @@ public abstract class TelegramBot extends TelegramBotsLongPollingApplication {
     }
 
     public void register() throws TelegramApiException {
-        this.updateConsumer.start();
         try {
             super.registerBot(this.token, this.updateConsumer);
+            this.updateConsumer.start();
         } catch (TelegramApiException e) {
             this.updateConsumer.interrupt();
             throw e;
@@ -70,8 +71,8 @@ public abstract class TelegramBot extends TelegramBotsLongPollingApplication {
                 if (!command.needRegister()) continue;
                 botCommands.add(
                         BotCommand.builder()
-                                .command(command.getLabel())
-                                .description(command.getDescription())
+                                .command(command.label)
+                                .description(command.description)
                                 .build()
                 );
             }

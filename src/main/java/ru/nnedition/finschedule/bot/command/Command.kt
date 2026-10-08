@@ -1,68 +1,38 @@
-package ru.nnedition.finschedule.bot.command;
+package ru.nnedition.finschedule.bot.command
 
-import org.jetbrains.annotations.NotNull;
-import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.api.objects.chat.Chat;
+import org.telegram.telegrambots.meta.api.objects.User
+import org.telegram.telegrambots.meta.api.objects.chat.Chat
 
-public abstract class Command {
-    @NotNull
-    private final String label;
-    @NotNull
-    private final String description;
-    @NotNull
-    private final CommandScope scope;
-    private final boolean register;
+/**
+ * @param label Название команды
+ * @param description Описание команды
+ * @param scope В каких чатах разрешено использовать команды, по совместительству используется для регистрации
+ * @param register Нужно ли регистрировать команду
+ */
+abstract class Command(
+    @JvmField
+    val label: String,
+    @JvmField
+    val description: String,
+    @JvmField
+    val scope: CommandScope = CommandScope.ALL_PRIVATE_CHATS,
+    private val register: Boolean = true
+) {
+    constructor(label: String, description: String, register: Boolean) : this(
+        label,
+        description,
+        CommandScope.ALL_PRIVATE_CHATS,
+        register
+    )
 
-    /**
-     * @param label Название команды
-     * @param description Описание команды
-     * @param scope В каких чатах разрешено использовать команды, по совместительству используется для регистрации
-     * @param register Нужно ли регистрировать команду
-     */
-    public Command(
-            @NotNull final String label,
-            @NotNull final String description,
-            @NotNull final CommandScope scope,
-            final boolean register
-    ) {
-        this.label = label;
-        this.description = description;
-        this.scope = scope;
-        this.register = register;
+    fun needRegister(): Boolean {
+        return this.register
     }
 
-    public Command(@NotNull final String label, @NotNull final String description, @NotNull final CommandScope scope) {
-        this(label, description, scope, true);
-    }
-
-    public Command(@NotNull final String label, @NotNull final String description, final boolean register) {
-        this(label, description, CommandScope.ALL_PRIVATE_CHATS, register);
-    }
-
-    public Command(@NotNull final String label, @NotNull final String description) {
-        this(label, description, CommandScope.ALL_PRIVATE_CHATS, true);
-    }
-
-    @NotNull
-    public final String getLabel() {
-        return this.label;
-    }
-    @NotNull
-    public final String getDescription() {
-        return this.description;
-    }
-    @NotNull
-    public final CommandScope getScope() {
-        return this.scope;
-    }
-    public final boolean needRegister() {
-        return this.register;
-    }
-
-    public abstract void execute(
-            @NotNull final String[] args,
-            @NotNull final User sender,
-            @NotNull final Chat chat,
-            final int messageId
-    );
+    abstract fun execute(
+        args: Array<String>,
+        sender: User,
+        chat: Chat,
+        messageId: Int
+    )
 }

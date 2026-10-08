@@ -1,6 +1,6 @@
-package ru.nnedition.finschedule.bot.command;
+package ru.nnedition.finschedule.bot.command
 
-public enum CommandScope {
+enum class CommandScope {
     ALL_ADMIN_PRIVATE_CHATS,
     ALL_PRIVATE_CHATS
 }

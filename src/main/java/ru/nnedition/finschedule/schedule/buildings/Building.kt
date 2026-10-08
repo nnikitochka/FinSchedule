@@ -1,18 +1,17 @@
-package ru.nnedition.finschedule.schedule.buildings;
+package ru.nnedition.finschedule.schedule.buildings
 
-import org.jetbrains.annotations.NotNull;
-import ru.nnedition.finschedule.FinSchedule;
+import ru.nnedition.finschedule.FinSchedule
 
-public record Building(
-        @NotNull String shortName,
-        @NotNull String fullName,
-        @NotNull String address
+@JvmRecord
+data class Building(
+    val shortName: String,
+    val fullName: String,
+    val address: String
 ) {
-    @NotNull
-    public String format() {
+    fun format(): String {
         return FinSchedule.getConfig().buildingFormat
-                .replace("{short_name}", this.shortName)
-                .replace("{full_name}", this.fullName)
-                .replace("{address}", this.address);
+            .replace("{short_name}", this.shortName)
+            .replace("{full_name}", this.fullName)
+            .replace("{address}", this.address)
     }
 }

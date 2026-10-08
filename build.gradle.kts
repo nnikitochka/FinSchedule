@@ -2,6 +2,7 @@ plugins {
     id("java")
     id("net.kyori.blossom") version "2.2.0"
     id("com.gradleup.shadow") version "8.3.0"
+    kotlin("jvm")
 }
 
 group = "ru.nnedition.finschedule"
@@ -61,4 +62,7 @@ tasks {
         archiveClassifier.set("")
         archiveFileName.set("FinSchedule.jar")
     }
+}
+kotlin {
+    jvmToolchain(25)
 }

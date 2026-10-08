@@ -25,10 +25,10 @@ import java.util.*;
 
 public class SelectGroupMenu extends Menu {
     public SelectGroupMenu() {
-        final var selectGroupHandler = new CallbackHandler("selectGroup") {
+        final var selectGroupHandler = new CallbackHandler("selGr") {
             @Override
             public void handle(CallbackData data, String callbackId, User from, Message message) {
-                final var selectedGroup = data.get("grName");
+                final var selectedGroup = data.get("grNm");
                 if (selectedGroup != null) {
                     final var group = FinSchedule.getSchedule().getGroupOrCreate(selectedGroup);
                     FinSchedule.getBot().getUsersManager().setUserGroup(from, group);
@@ -43,7 +43,7 @@ public class SelectGroupMenu extends Menu {
             }
         };
 
-        final var selectGroupPage = new CallbackHandler("selectGroupPage") {
+        final var selectGroupPage = new CallbackHandler("selGrPage") {
             @Override
             public void handle(CallbackData data, String callbackId, User from, Message message) {
                 final var pageStr = data.get("page");
@@ -123,7 +123,7 @@ public class SelectGroupMenu extends Menu {
         groups.get(page).forEach(group -> {
             final var groupButton = InlineKeyboardButton.builder()
                     .text(group)
-                    .callbackData(new CallbackData("selectGroup", Map.of("grName", group)).serialize())
+                    .callbackData(new CallbackData("selGr", Map.of("grNm", group)).serialize())
                     .build();
 
             rows.add(new InlineKeyboardRow(Collections.singletonList(groupButton)));
@@ -132,7 +132,7 @@ public class SelectGroupMenu extends Menu {
         final var navigationRow = new InlineKeyboardRow();
         if (page > 1) {
             final var callbackData = new CallbackData(
-                    "selectGroupPage",
+                    "selGrPage",
                     Map.of("page", String.valueOf(page-1))
             ).serialize();
 
@@ -145,7 +145,7 @@ public class SelectGroupMenu extends Menu {
         }
         if (page < groups.size()) {
             final var callbackData = new CallbackData(
-                    "selectGroupPage",
+                    "selGrPage",
                     Map.of("page", String.valueOf(page+1))
             ).serialize();
 

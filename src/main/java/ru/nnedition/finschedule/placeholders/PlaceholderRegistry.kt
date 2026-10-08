@@ -1,50 +1,46 @@
-package ru.nnedition.finschedule.placeholders;
+package ru.nnedition.finschedule.placeholders
 
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import ru.nnedition.finschedule.placeholders.impl.AppVersionPlaceholder;
-import ru.nnedition.finschedule.placeholders.impl.BotInfoPlaceholder;
-import ru.nnedition.finschedule.placeholders.impl.BuildingsPlaceholder;
-import ru.nnedition.finschedule.placeholders.impl.CommandsPlaceholder;
-import ru.nnedition.logger.Logger;
+import ru.nnedition.finschedule.placeholders.impl.AppVersionPlaceholder
+import ru.nnedition.finschedule.placeholders.impl.BotInfoPlaceholder
+import ru.nnedition.finschedule.placeholders.impl.BuildingsPlaceholder
+import ru.nnedition.finschedule.placeholders.impl.CommandsPlaceholder
+import ru.nnedition.logger.Logger
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
-public class PlaceholderRegistry {
-    private static final Logger logger = Logger.getLogger(PlaceholderRegistry.class);
-
-    private final Map<String, Placeholder> placeholders = new HashMap<>();
-    @NotNull
-    public Collection<Placeholder> getPlaceholders() {
-        return this.placeholders.values();
-    }
-    @Nullable
-    public Placeholder getPlaceholder(@NotNull final String key) {
-        return this.placeholders.get(key);
+class PlaceholderRegistry {
+    private val placeholders: MutableMap<String, Placeholder> = HashMap()
+    fun getPlaceholders(): Collection<Placeholder> {
+        return this.placeholders.values
     }
 
-    public void register(@NotNull final Placeholder placeholder) {
-        if (this.placeholders.containsKey(placeholder.getKey())) {
-            logger.error("Ошибка при регистрации команды: команда с именем " + placeholder.getKey() + " уже зарегистрирована!");
-            return;
+    fun getPlaceholder(key: String): Placeholder? {
+        return this.placeholders[key]
+    }
+
+    fun register(placeholder: Placeholder) {
+        if (this.placeholders.containsKey(placeholder.key)) {
+            logger.error("Ошибка при регистрации команды: команда с именем " + placeholder.key + " уже зарегистрирована!")
+            return
         }
 
-        this.placeholders.put(placeholder.getKey(), placeholder);
+        this.placeholders[placeholder.key] = placeholder
     }
-    public void register(@NotNull final Placeholder... placeholders) {
-        for (final var command : placeholders) {
-            this.register(command);
+
+    fun register(vararg placeholders: Placeholder) {
+        for (command in placeholders) {
+            this.register(command)
         }
     }
 
-    public void registerDefaults() {
+    fun registerDefaults() {
         this.register(
-                new AppVersionPlaceholder(),
-                new BotInfoPlaceholder(),
-                new BuildingsPlaceholder(),
-                new CommandsPlaceholder()
-        );
+            AppVersionPlaceholder(),
+            BotInfoPlaceholder(),
+            BuildingsPlaceholder(),
+            CommandsPlaceholder()
+        )
+    }
+
+    companion object {
+        private val logger = Logger.getLogger(PlaceholderRegistry::class.java)
     }
 }

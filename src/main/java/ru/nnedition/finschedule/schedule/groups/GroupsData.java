@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public final class GroupsData implements DataHandler {
+public final class GroupsData {
     private static final Logger logger = Logger.getLogger(GroupsData.class);
 
     private static final Pattern subGroupRegex = Pattern.compile("\\.\\d$");
@@ -58,58 +58,5 @@ public final class GroupsData implements DataHandler {
         }
 
         return group;
-    }
-
-    private static final String SCHEDULE_SITE = "http://barnaul.fa.ru/lessons/";
-
-    private static final Pattern SELECT_PATTERN = Pattern.compile(
-            "<select\\s+name=\"groupname\"[^>]*>(.*?)</select>",
-            Pattern.DOTALL
-    );
-
-    private static final Pattern OPTION_PATTERN = Pattern.compile(
-            "<option\\s+value=([^>]+)>[^<]+</option>"
-    );
-
-    @Override
-    public void updateData() {
-        final var request = new Request.Builder().url(SCHEDULE_SITE).get().build();
-
-        final String html;
-        try (final var response = new OkHttpClient().newCall(request).execute()) {
-            html = response.body() != null ? response.body().string() : null;
-        } catch (IOException e) {
-            logger.error("Ошибка при обновлении данных групп: " + e.getLocalizedMessage(), e);
-            return;
-        }
-
-        if (html == null) return;
-
-        final Matcher selectMatcher = SELECT_PATTERN.matcher(html);
-        if (!selectMatcher.find()) return;
-
-        final List<Group> groups = getGroups(selectMatcher);
-
-        this.groups.clear();
-        this.groups.addAll(groups);
-    }
-
-    @NotNull
-    private static List<Group> getGroups(Matcher selectMatcher) {
-        final List<Group> groups = new ArrayList<>();
-        final String selectContent = selectMatcher.group(1);
-        final Matcher optionMatcher = OPTION_PATTERN.matcher(selectContent);
-
-        while (optionMatcher.find()) {
-            String value = optionMatcher.group(1);
-            if (value.startsWith("\"") && value.endsWith("\"")) {
-                value = value.substring(1, value.length() - 1);
-            }
-
-            if (value.contains("?")) continue;
-
-            groups.add(new Group(value));
-        }
-        return groups;
     }
 }

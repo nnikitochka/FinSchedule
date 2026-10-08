@@ -1,29 +1,23 @@
-package ru.nnedition.finschedule.bot.command.impl;
+package ru.nnedition.finschedule.bot.command.impl
 
-import org.jetbrains.annotations.NotNull;
-import org.telegram.telegrambots.meta.api.methods.ParseMode;
-import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.objects.User;
-import org.telegram.telegrambots.meta.api.objects.chat.Chat;
-import ru.nnedition.finschedule.FinSchedule;
-import ru.nnedition.finschedule.bot.command.Command;
-import ru.nnedition.finschedule.bot.command.CommandScope;
-import ru.nnedition.finschedule.utils.Parser;
-import ru.nnedition.finschedule.utils.SendingUtils;
+import org.telegram.telegrambots.meta.api.methods.ParseMode
+import org.telegram.telegrambots.meta.api.methods.send.SendMessage
+import org.telegram.telegrambots.meta.api.objects.User
+import org.telegram.telegrambots.meta.api.objects.chat.Chat
+import ru.nnedition.finschedule.FinSchedule
+import ru.nnedition.finschedule.bot.command.Command
+import ru.nnedition.finschedule.bot.command.CommandScope
+import ru.nnedition.finschedule.utils.Parser
+import ru.nnedition.finschedule.utils.SendingUtils
 
-public class HelpCommand extends Command {
-    public HelpCommand() {
-        super("help", "помощь", CommandScope.ALL_PRIVATE_CHATS, true);
-    }
+class HelpCommand : Command("help", "помощь", CommandScope.ALL_PRIVATE_CHATS, true) {
+    override fun execute(args: Array<String>, sender: User, chat: Chat, messageId: Int) {
+        val message: SendMessage = SendMessage.builder()
+            .chatId(chat.id)
+            .text(Parser.all(sender, FinSchedule.getConfig().help))
+            .parseMode(ParseMode.MARKDOWNV2)
+            .build()
 
-    @Override
-    public void execute(@NotNull String[] args, @NotNull User sender, @NotNull Chat chat, int messageId) {
-        SendMessage message = SendMessage.builder()
-                .chatId(chat.getId())
-                .text(Parser.all(sender, FinSchedule.getConfig().help))
-                .parseMode(ParseMode.MARKDOWNV2)
-                .build();
-
-        SendingUtils.tryExecute(message);
+        SendingUtils.tryExecute(message)
     }
 }
