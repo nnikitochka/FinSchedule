@@ -35,6 +35,7 @@ class PlaceholderRegistry {
         this.register(
             AppVersionPlaceholder(),
             BotInfoPlaceholder(),
+            BotUsersCountPlaceholder(),
             BuildingsPlaceholder(),
             CommandsPlaceholder()
         )

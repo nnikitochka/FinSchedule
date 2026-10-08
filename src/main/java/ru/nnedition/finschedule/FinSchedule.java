@@ -11,10 +11,7 @@ import ru.nnedition.logger.Logger;
 import java.io.IOException;
 
 public final class FinSchedule {
-    private static final long START_TIME = System.currentTimeMillis();
-    public static long getUpTime() {
-        return System.currentTimeMillis() - START_TIME;
-    }
+    public static final Statistic statistics = new Statistic();
 
     public static final Logger logger = Logger.getLogger(FinSchedule.class);
 
