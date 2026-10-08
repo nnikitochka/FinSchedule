@@ -1,12 +1,10 @@
 package ru.nnedition.finschedule.schedule;
 
-import okhttp3.OkHttpClient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.nnedition.finschedule.schedule.buildings.Building;
 import ru.nnedition.finschedule.schedule.buildings.BuildingsData;
-import ru.nnedition.finschedule.schedule.dataminer.DataMinerManager;
-import ru.nnedition.finschedule.schedule.dataminer.impl.BuildingsDataMiner;
+import ru.nnedition.finschedule.schedule.dataminer.manager.DataMinerManager;
 import ru.nnedition.finschedule.schedule.groups.Group;
 import ru.nnedition.finschedule.schedule.groups.GroupsData;
 import ru.nnedition.finschedule.schedule.lesson.Day;

@@ -6,10 +6,7 @@ import org.jsoup.Jsoup
 import ru.nnedition.finschedule.schedule.buildings.Building
 import ru.nnedition.finschedule.schedule.dataminer.DataMineResult
 import ru.nnedition.finschedule.schedule.dataminer.DataMiner
-import ru.nnedition.finschedule.schedule.dataminer.DataMinerManager
-import ru.nnedition.finschedule.schedule.groups.Group
-import ru.nnedition.logger.Logger
-import java.io.IOException
+import ru.nnedition.finschedule.schedule.dataminer.manager.DataMinerManager
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -17,9 +14,7 @@ class BuildingsDataMiner(
     private val httpClient: OkHttpClient,
     private val manager: DataMinerManager,
 ) : DataMiner("BuildingsDataMiner") {
-    companion object {
-        private val logger = Logger.getLogger(BuildingsDataMiner::class.java)
-
+    private companion object {
         private const val SCHEDULE_SITE = "http://barnaul.fa.ru/lessons/"
         val request: Request = Request.Builder().url(SCHEDULE_SITE).get().build()
 
@@ -27,19 +22,47 @@ class BuildingsDataMiner(
     }
 
     fun fetchData(): Map<String, Building>? {
-        val html: String = when (val requestResult = sendRequest()) {
-            is DataMineResult.Fail -> {
-                manager.reportDataFetchError(this, requestResult.description)
-                return null
-            }
-            is DataMineResult.Success -> requestResult.value
-            else -> {
-                manager.reportUnknownResult(this)
-                return null
-            }
+        val startedAt = System.currentTimeMillis()
+
+        val requestResult = sendRequest(httpClient, request)
+        if (requestResult is DataMineResult.Fail) {
+            manager.reportDataFetchError(
+                this,
+                requestResult.description,
+                requestResult.error,
+                requestResult.meta,
+                totalDurationMs = elapsedMs(startedAt),
+            )
+            return null
+        }
+        if (requestResult !is DataMineResult.Success) {
+            manager.reportUnknownResult(this, totalDurationMs = elapsedMs(startedAt))
+            return null
         }
 
-        return extractBuildings(html)
+        val html = requestResult.value
+        val meta = requestResult.meta
+
+        val buildings = extractBuildings(html)
+        if (buildings.isEmpty()) {
+            manager.reportDataFetchError(
+                this,
+                "Корпуса не найдены: на странице нет подходящих строк в таблице.",
+                meta = meta,
+                parsedCount = 0,
+                totalDurationMs = elapsedMs(startedAt),
+            )
+            return null
+        }
+
+        manager.reportDataFetchSuccess(
+            this,
+            "Извлечены корпуса: $buildings",
+            meta = meta,
+            parsedCount = buildings.size,
+            totalDurationMs = elapsedMs(startedAt),
+        )
+        return buildings
     }
 
     fun extractBuildings(html: String): Map<String, Building> {
@@ -63,22 +86,5 @@ class BuildingsDataMiner(
         }
 
         return buildingMap
-    }
-
-    private fun sendRequest(): DataMineResult<String> = try {
-        httpClient.newCall(request).execute().use { response ->
-            val body = response.body
-                ?: return DataMineResult.Fail("Запрос вернул пустое (null) тело ответа.")
-
-            val responseText = body.string()
-
-            if (responseText.isBlank()) {
-                return DataMineResult.Fail("Запрос вернул пустую html страницу.")
-            }
-
-            DataMineResult.Success(responseText)
-        }
-    } catch (e: IOException) {
-        return DataMineResult.Fail("Ошибка при обновлении данных корпусов: ${e.localizedMessage}", e)
     }
 }

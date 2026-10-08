@@ -4,11 +4,8 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import ru.nnedition.finschedule.schedule.dataminer.DataMineResult
 import ru.nnedition.finschedule.schedule.dataminer.DataMiner
-import ru.nnedition.finschedule.schedule.dataminer.DataMinerManager
+import ru.nnedition.finschedule.schedule.dataminer.manager.DataMinerManager
 import ru.nnedition.finschedule.schedule.groups.Group
-import ru.nnedition.finschedule.schedule.groups.GroupsData
-import ru.nnedition.logger.Logger
-import java.io.IOException
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -31,42 +28,58 @@ class GroupsDataMiner(
     }
 
     fun fetchData(): List<Group>? {
-        val html: String = when (val requestResult = sendRequest()) {
-            is DataMineResult.Fail -> {
-                manager.reportDataFetchError(this, requestResult.description)
-                return null
-            }
-            is DataMineResult.Success -> requestResult.value
-            else -> {
-                manager.reportUnknownResult(this)
-                return null
-            }
+        val startedAt = System.currentTimeMillis()
+
+        val requestResult = sendRequest(httpClient, request)
+        if (requestResult is DataMineResult.Fail) {
+            manager.reportDataFetchError(
+                this,
+                requestResult.description,
+                requestResult.error,
+                requestResult.meta,
+                totalDurationMs = elapsedMs(startedAt),
+            )
+            return null
         }
+        if (requestResult !is DataMineResult.Success) {
+            manager.reportUnknownResult(this, totalDurationMs = elapsedMs(startedAt))
+            return null
+        }
+
+        val html = requestResult.value
+        val meta = requestResult.meta
 
         val selectMatcher = SELECT_PATTERN.matcher(html)
-        if (!selectMatcher.find()) return null
+        if (!selectMatcher.find()) {
+            manager.reportDataFetchError(
+                this,
+                "На странице не найден блок <select name=\"groupname\"> со списком групп.",
+                meta = meta,
+                totalDurationMs = elapsedMs(startedAt),
+            )
+            return null
+        }
 
         val groups = extractGroups(selectMatcher)
-
-        manager.reportDataFetchSuccess(this, "Извлечены группы: $groups")
-        return groups
-    }
-
-    private fun sendRequest(): DataMineResult<String> = try {
-        httpClient.newCall(request).execute().use { response ->
-            val body = response.body
-                ?: return DataMineResult.Fail("Запрос вернул пустое (null) тело ответа.")
-
-            val responseText = body.string()
-
-            if (responseText.isBlank()) {
-                return DataMineResult.Fail("Запрос вернул пустую html страницу.")
-            }
-
-            DataMineResult.Success(responseText)
+        if (groups.isEmpty()) {
+            manager.reportDataFetchError(
+                this,
+                "Блок со списком групп найден, но ни одной группы извлечь не удалось.",
+                meta = meta,
+                parsedCount = 0,
+                totalDurationMs = elapsedMs(startedAt),
+            )
+            return null
         }
-    } catch (e: IOException) {
-        return DataMineResult.Fail("Ошибка при получении данных групп: ${e.localizedMessage}", e)
+
+        manager.reportDataFetchSuccess(
+            this,
+            "Извлечены группы: $groups",
+            meta = meta,
+            parsedCount = groups.size,
+            totalDurationMs = elapsedMs(startedAt),
+        )
+        return groups
     }
 
     private fun extractGroups(selectMatcher: Matcher): List<Group> {
